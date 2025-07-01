@@ -26,11 +26,11 @@ const prompts = [
 
   "Can I get an extension for technical issues during submission?",
 ];
-const SuggestedPrompts = ({onClick}) => {
+const SuggestedPrompts = ({handlePromptClick}) => {
   return <div className="grid grid-cols-3 gap-4 mt-4">
     {
       prompts.map((prompt,index) => {
-        return <PrompSuggestionButton text={prompt} onClick={() => {}} key={`suggestion-${index}`}/>
+        return <PrompSuggestionButton text={prompt} onClick={() => handlePromptClick(prompt)} key={`suggestion-${index}`}/>
       })
     }
   </div>;

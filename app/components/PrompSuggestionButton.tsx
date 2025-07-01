@@ -1,13 +1,14 @@
-import React from 'react'
+import React from "react";
 
-const PrompSuggestionButton = ({onClick, text}) => {
+const PrompSuggestionButton = ({ onClick, text }) => {
   return (
     <button
-    onClick={onClick}
-    className=' rounded-2xl bg-[#18181b] p-4 text-start text-white'>
-        {text}
+      onClick={onClick}
+      className="cursor-pointer rounded-2xl bg-[#18181b] p-4 text-start text-white"
+    >
+      {text}
     </button>
-  )
-}
+  );
+};
 
-export default PrompSuggestionButton
+export default PrompSuggestionButton;

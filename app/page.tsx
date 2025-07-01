@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useChat } from "@ai-sdk/react";
+import { useChat, Message } from "@ai-sdk/react";
 import SuggestedPrompts from "./components/SuggestedPrompts";
 import LoadingBubble from "./components/LoadingBubble";
 import ChatBubble from "./components/ChatBubble";
@@ -8,7 +8,17 @@ import ChatBubble from "./components/ChatBubble";
 export default function Home() {
   const { append, messages, input, handleSubmit, handleInputChange, status } =
     useChat();
-  const noMessages = true;
+
+  const handlePromptClick = (prompt: string) => {
+    const message: Message = {
+      id: crypto.randomUUID(),
+      content: prompt,
+      role: "user",
+    };
+    append(message);
+  };
+
+  const noMessages = !messages || messages.length === 0;
   return (
     <main className="w-[80dvw] h-[80dvh] bg-blue-50 flex justify-between items-center flex-col rounded-2xl p-5">
       <Image
@@ -17,7 +27,7 @@ export default function Home() {
         src={"/ask-hull.png"}
         alt="Ask Hull Logo Image"
       />
-      <section className={noMessages ? " " : " "}>
+      <section className={`${noMessages ? " " : " "} relative w-full h-full`}>
         {noMessages ? (
           <>
             <p className="">
@@ -25,18 +35,16 @@ export default function Home() {
               deadlines, or degree requirements - I’ll explain the regulations
               in plain English.
             </p>
-            <br />
-            <p className="italic">
-              For official confirmation, always check your program handbook.
-            </p>
-            <SuggestedPrompts onClick={() => {}} />
+            <SuggestedPrompts handlePromptClick={handlePromptClick} />
           </>
         ) : (
           <>
             {messages.map((messages, index) => (
-              <ChatBubble />
+              <ChatBubble message={{}} />
             ))}
-            <LoadingBubble />
+            <div className="absolute bg-[#303030] p-5 rounded-t-[20px] rounded-br-[20px] bottom-5 left-5">
+              <LoadingBubble />
+            </div>
             {/* <span className="h-full flex flex-col justify-end overflow-scroll"></span> */}
           </>
         )}
