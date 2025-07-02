@@ -10,6 +10,7 @@ export default function Home() {
     useChat();
 
   const handlePromptClick = (prompt: string) => {
+    console.log({ prompt });
     const message: Message = {
       id: crypto.randomUUID(),
       content: prompt,
@@ -39,13 +40,14 @@ export default function Home() {
           </>
         ) : (
           <>
-            {messages.map((messages, index) => (
-              <ChatBubble message={{}} />
+            {messages.map((message, index) => (
+              <ChatBubble key={index} message={message} />
             ))}
-            <div className="absolute bg-[#303030] p-5 rounded-t-[20px] rounded-br-[20px] bottom-5 left-5">
-              <LoadingBubble />
-            </div>
-            {/* <span className="h-full flex flex-col justify-end overflow-scroll"></span> */}
+            {(status === "streaming" || status === "submitted") && (
+              <div className="absolute bg-[#303030] p-5 rounded-t-[20px] rounded-br-[20px] bottom-5 left-5">
+                <LoadingBubble />
+              </div>
+            )}
           </>
         )}
       </section>
