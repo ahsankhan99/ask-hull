@@ -1,16 +1,20 @@
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import { GoogleGenAI } from "@google/genai";
+import { embed, generateText } from "ai";
+import { google } from "@ai-sdk/google";
+import { generateId, createDataStreamResponse, streamText } from "ai";
+import { NextResponse } from "next/server";
 
 const {
   ASTRA_DB_NAMESPACE,
   ASTRA_DB_COLLECTION,
   ASTRA_DB_API_ENDPOINT,
   ASTRA_DB_APPLICATION_TOKEN,
-  GOOGLE_API_KEY,
+  GOOGLE_GENERATIVE_AI_API_KEY,
 } = process.env;
 
 const gemini = new GoogleGenAI({
-  apiKey: GOOGLE_API_KEY,
+  apiKey: GOOGLE_GENERATIVE_AI_API_KEY,
 });
 
 const client = new DataAPIClient(ASTRA_DB_APPLICATION_TOKEN);
@@ -20,6 +24,7 @@ export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
     const latestMessage = messages[messages?.length - 1]?.content;
+
     let docContext: any = "";
 
     const embedding = await gemini.models.embedContent({
@@ -44,9 +49,7 @@ export async function POST(req: Request) {
     }
     const template = {
       role: "model",
-      parts: [
-        {
-          text: `You are a helpful, formal, and precise assistant trained on the University of Hull's official policies. 
+      text: `You are a helpful, formal, and precise assistant trained on the University of Hull's official policies. 
             Your role is to provide clear, accurate answers about academic regulations, appeals, 
             extensions, and student support. Always cite specific policy documents when possible, and avoid speculation. 
             If unsure, direct users to the relevant university office. 
@@ -67,28 +70,34 @@ export async function POST(req: Request) {
             QUESTION: ${latestMessage}
             --------------
             `,
-        },
-      ],
     };
 
-    const response = await gemini.models.generateContentStream({
-      model: "gemini-2.5-flash",
-      contents: [template, ...messages],
-    });
 
-    const stream = new ReadableStream({
-        async start(controller) {
-          for await (const chunk of response) {
-            controller.enqueue(new TextEncoder().encode(chunk.text));
-          }
-          controller.close();
-        },
-      });
-  
-      console.log({stream})
-      return new Response(stream, {
-        headers: { "Content-Type": "text/plain" },
-      });
+    return createDataStreamResponse({
+      execute: (dataStream) => {
+        dataStream.writeData("initialized call");
+
+        const result = streamText({
+          model: google("gemini-2.5-flash"),
+          system: template?.text,
+          messages,
+          onChunk() {
+            dataStream.writeMessageAnnotation({ chunk: "123" });
+          },
+          onFinish() {
+            // message annotation:
+            dataStream.writeMessageAnnotation({
+              id: generateId(), // e.g. id from saved DB record
+              other: "information",
+            });
+
+            dataStream.writeData("call completed");
+          },
+        });
+
+        result.mergeIntoDataStream(dataStream);
+      },
+    });
   } catch (err) {
     console.error("Error... ", err);
   }
