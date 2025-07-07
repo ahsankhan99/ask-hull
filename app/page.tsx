@@ -7,10 +7,11 @@ import ChatBubble from "./components/ChatBubble";
 
 export default function Home() {
   const { append, messages, input, handleSubmit, handleInputChange, status } =
-    useChat();
+    useChat({
+      api: "/api/chat",
+    });
 
   const handlePromptClick = (prompt: string) => {
-    console.log({ prompt });
     const message: Message = {
       id: crypto.randomUUID(),
       content: prompt,
@@ -28,7 +29,7 @@ export default function Home() {
         src={"/ask-hull.png"}
         alt="Ask Hull Logo Image"
       />
-      <section className={`${noMessages ? " " : " "} relative w-full h-full`}>
+      <section className={`${noMessages ? " " : " "} relative overflow-scroll w-full h-full`}>
         {noMessages ? (
           <>
             <p className="">
@@ -43,7 +44,8 @@ export default function Home() {
             {messages.map((message, index) => (
               <ChatBubble key={index} message={message} />
             ))}
-            {(status === "streaming" || status === "submitted") && (
+
+            {status === "streaming" && (
               <div className="absolute bg-[#303030] p-5 rounded-t-[20px] rounded-br-[20px] bottom-5 left-5">
                 <LoadingBubble />
               </div>
