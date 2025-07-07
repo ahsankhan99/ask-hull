@@ -1,9 +1,7 @@
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import { GoogleGenAI } from "@google/genai";
-import { embed, generateText } from "ai";
 import { google } from "@ai-sdk/google";
 import { generateId, createDataStreamResponse, streamText } from "ai";
-import { NextResponse } from "next/server";
 
 const {
   ASTRA_DB_NAMESPACE,
@@ -25,7 +23,7 @@ export async function POST(req: Request) {
     const { messages } = await req.json();
     const latestMessage = messages[messages?.length - 1]?.content;
 
-    let docContext: any = "";
+    let docContext : string = "";
 
     const embedding = await gemini.models.embedContent({
       model: "text-embedding-004",
@@ -42,7 +40,8 @@ export async function POST(req: Request) {
       });
       const documents = await cursor.toArray();
       const docsMap = documents?.map((doc) => doc.text);
-      docContext = docsMap;
+      docContext = docsMap.join("\n");
+
     } catch (err) {
       console.error("Error querying db ", err);
       docContext = "";
