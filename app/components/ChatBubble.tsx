@@ -8,7 +8,7 @@ const ChatBubble = ({ message }) => {
           : "mr-auto text-white"
       } rounded-sm p-2 text-sm border-0 `}
     >
-      {content} {/* Add this line */}
+      {content} 
     </div>
   );
 };

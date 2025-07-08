@@ -4,10 +4,9 @@ import SuggestedPrompts from "./components/SuggestedPrompts";
 import ChatBubble from "./components/ChatBubble";
 
 export default function Home() {
-  const { append, messages, input, handleSubmit, handleInputChange } =
-    useChat({
-      api: "/api/chat",
-    });
+  const { append, messages, input, handleSubmit, handleInputChange } = useChat({
+    api: "/api/chat",
+  });
 
   const handlePromptClick = (prompt: string) => {
     const message: Message = {
@@ -27,14 +26,14 @@ export default function Home() {
         } flex flex-col gap-4 relative overflow-x-hidden overflow-y-scroll w-full h-full no-scrollbar py-4`}
       >
         {noMessages ? (
-          <>
+          <div className="flex flex-col justify-between h-full">
             <p className="text-white">
               Confused by university rules? Ask me anything about assessments,
               deadlines, or degree requirements - I’ll explain the regulations
               in plain English.
             </p>
             <SuggestedPrompts handlePromptClick={handlePromptClick} />
-          </>
+          </div>
         ) : (
           <>
             {messages.map((message, index) => (
@@ -53,15 +52,19 @@ export default function Home() {
         className="min-h-[100px] w-full flex overflow-hidden"
         onSubmit={handleSubmit}
       >
-        <input
-          className="w-full text-white p-2 bg-[#3f3f47]/30 rounded-2xl border border-[#3f3f47] focus:outline-none focus:ring- focus:border-white"
-          type="text"
+        <textarea
+          className="no-scrollbar w-full text-white p-3 bg-[#3f3f47]/30 rounded-2xl border border-[#3f3f47] focus:outline-none focus:border-white resize-none"
+          rows={1}
           onChange={handleInputChange}
           value={input}
           placeholder="Ask me something"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e);
+            }
+          }}
         />
-
-        <input className=" hidden " type="submit" value="Search" />
       </form>
     </main>
   );
