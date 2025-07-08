@@ -22,17 +22,15 @@ export default function Home() {
 
   const noMessages = !messages || messages.length === 0;
   return (
-    <main className="w-[80dvw] h-[80dvh] bg-blue-50 flex justify-between items-center flex-col rounded-2xl p-5">
-      <Image
-        width={300}
-        height={120}
-        src={"/ask-hull.png"}
-        alt="Ask Hull Logo Image"
-      />
-      <section className={`${noMessages ? " " : " "} relative overflow-scroll w-full h-full`}>
+    <main className="lg:min-w-[60dvw] lg:max-w-[60dvw] w-full h-full flex justify-between items-center flex-col">
+      <section
+        className={`${
+          noMessages ? " " : " "
+        } flex flex-col gap-4 relative overflow-x-hidden overflow-y-scroll w-full h-full no-scrollbar py-4`}
+      >
         {noMessages ? (
           <>
-            <p className="">
+            <p className="text-white">
               Confused by university rules? Ask me anything about assessments,
               deadlines, or degree requirements - I’ll explain the regulations
               in plain English.
@@ -45,30 +43,27 @@ export default function Home() {
               <ChatBubble key={index} message={message} />
             ))}
 
-            {status === "streaming" && (
-              <div className="absolute bg-[#303030] p-5 rounded-t-[20px] rounded-br-[20px] bottom-5 left-5">
+            {/* {status === "streaming" && (
+              <div className="absolute bottom-5 left-5">
                 <LoadingBubble />
               </div>
-            )}
+            )} */}
           </>
         )}
       </section>
       <form
-        className="min-h-[50px] w-full flex border-t-1 p-2 overflow-hidden"
+        className="min-h-[100px] w-full flex overflow-hidden"
         onSubmit={handleSubmit}
       >
         <input
-          className="max-w-[85%] w-full p-2 border-none outline-0"
+          className="w-full text-white p-2 bg-[#3f3f47]/30 rounded-2xl border border-[#3f3f47] focus:outline-none focus:ring- focus:border-white"
           type="text"
           onChange={handleInputChange}
           value={input}
           placeholder="Ask me something"
         />
-        <input
-          className="max-w-[15%] cursor-pointer w-full bg-[#0e1647] text-white"
-          type="submit"
-          value="Search"
-        />
+
+        <input className=" hidden " type="submit" value="Search" />
       </form>
     </main>
   );
