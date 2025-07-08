@@ -8,6 +8,7 @@ export default function Home() {
     api: "/api/chat",
   });
 
+  console.log(messages)
   const handlePromptClick = (prompt: string) => {
     const message: Message = {
       id: crypto.randomUUID(),
