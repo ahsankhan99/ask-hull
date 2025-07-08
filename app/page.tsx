@@ -1,12 +1,10 @@
 "use client";
-import Image from "next/image";
 import { useChat, Message } from "@ai-sdk/react";
 import SuggestedPrompts from "./components/SuggestedPrompts";
-import LoadingBubble from "./components/LoadingBubble";
 import ChatBubble from "./components/ChatBubble";
 
 export default function Home() {
-  const { append, messages, input, handleSubmit, handleInputChange, status } =
+  const { append, messages, input, handleSubmit, handleInputChange } =
     useChat({
       api: "/api/chat",
     });
