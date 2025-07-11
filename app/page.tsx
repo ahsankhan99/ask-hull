@@ -2,9 +2,10 @@
 import { useChat, Message } from "@ai-sdk/react";
 import SuggestedPrompts from "./components/SuggestedPrompts";
 import ChatBubble from "./components/ChatBubble";
+import LoadingBubble from "./components/LoadingBubble";
 
 export default function Home() {
-  const { append, messages, input, handleSubmit, handleInputChange } = useChat({
+  const { append, messages, input, handleSubmit, handleInputChange,status } = useChat({
     api: "/api/chat",
   });
 
@@ -33,6 +34,7 @@ export default function Home() {
               deadlines, or degree requirements - I’ll explain the regulations
               in plain English.
             </p>
+                        
             <SuggestedPrompts handlePromptClick={handlePromptClick} />
           </div>
         ) : (
@@ -40,12 +42,12 @@ export default function Home() {
             {messages.map((message, index) => (
               <ChatBubble key={index} message={message} />
             ))}
-
-            {/* {status === "streaming" && (
-              <div className="absolute bottom-5 left-5">
+            
+            {(status === "submitted" || status === "streaming") && (
+              <div className="mr-auto mb-10">
                 <LoadingBubble />
               </div>
-            )} */}
+            )}
           </>
         )}
       </section>
